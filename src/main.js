@@ -1,117 +1,99 @@
 import * as THREE from 'three';
 
-// Setup the scene
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87CEEB); // Sky blue for day
+let camera, scene, renderer;
+let currentFloor = 0;
 
-// Setup the camera
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 30;
-camera.position.y = 10;
+function init() {
+    // Setup scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB); // Sky blue for day
 
-// Setup the renderer
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('canvas-container').appendChild(renderer.domElement);
+    // Setup camera
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 10, 30);
 
-// Add ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
+    // Setup renderer
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-// Add a point light
-const pointLight = new THREE.PointLight(0xffffff, 1);
-pointLight.position.set(10, 10, 10);
-scene.add(pointLight);
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-// Function to create a building
-function createBuilding(floors) {
-    const building = new THREE.Group();
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(10, 10, 10);
+    scene.add(pointLight);
 
-    // Create each floor
-    for (let i = 0; i < floors; i++) {
-        const floorGeometry = new THREE.BoxGeometry(10, 3, 10);
-        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
-        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-        floor.position.y = i * 3;
-        building.add(floor);
+    // Build the building
+    buildBuilding();
 
-        // Add windows to each floor
-        const windowGeometry = new THREE.BoxGeometry(1, 1, 0.1);
-        const windowMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    // Event listeners
+    window.addEventListener('resize', onWindowResize);
+    document.getElementById('doorbell').addEventListener('click', onDoorbellClicked);
 
-        for (let j = -3; j <= 3; j += 2) {
-            const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
-            window1.position.set(j, i * 3, 5.05);
-            building.add(window1);
-
-            const window2 = new THREE.Mesh(windowGeometry, windowMaterial);
-            window2.position.set(j, i * 3, -5.05);
-            building.add(window2);
-
-            const window3 = new THREE.Mesh(windowGeometry, windowMaterial);
-            window3.position.set(5.05, i * 3, j);
-            window3.rotation.y = Math.PI / 2;
-            building.add(window3);
-
-            const window4 = new THREE.Mesh(windowGeometry, windowMaterial);
-            window4.position.set(-5.05, i * 3, j);
-            window4.rotation.y = Math.PI / 2;
-            building.add(window4);
-        }
-    }
-
-    return building;
+    animate();
 }
 
-// Create the building with 10 floors
-const building = createBuilding(10);
-scene.add(building);
+function buildBuilding() {
+    // Ground floor
+    const groundFloor = createFloor(0x9c661f, 'Accueil');
+    groundFloor.position.set(0, 0, 0);
+    scene.add(groundFloor);
 
-// Add a ground plane
-const groundGeometry = new THREE.PlaneGeometry(100, 100);
-const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-scene.add(ground);
+    // Projects floor
+    const projectsFloor = createFloor(0x7f7f7f, 'Projets');
+    projectsFloor.position.set(0, 10, 0);
+    scene.add(projectsFloor);
 
-// Add the sun and the moon
-const sunGeometry = new THREE.SphereGeometry(1, 32, 32);
-const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(15, 15, -10);
-scene.add(sun);
+    // Experiences floor
+    const experiencesFloor = createFloor(0x4c4c4c, 'Expériences');
+    experiencesFloor.position.set(0, 20, 0);
+    scene.add(experiencesFloor);
 
-const moonGeometry = new THREE.SphereGeometry(1, 32, 32);
-const moonMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-moon.position.set(-15, -15, 10);
-moon.visible = false;
-scene.add(moon);
-
-// Toggle Day/Night mode
-document.getElementById('toggle-mode').addEventListener('click', () => {
-    const isNight = scene.background.getHex() === 0x000000;
-    scene.background.set(isNight ? 0x87CEEB : 0x000000); // Sky blue or black
-    ambientLight.intensity = isNight ? 0.5 : 0.2;
-    pointLight.intensity = isNight ? 1 : 0.5;
-    console.log(isNight ? 'Switched to day mode' : 'Switched to night mode');
-});
-
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+    // Contact floor
+    const contactFloor = createFloor(0x2b2b2b, 'Contact');
+    contactFloor.position.set(0, 30, 0);
+    scene.add(contactFloor);
 }
-animate();
 
-// Responsive design
-window.addEventListener('resize', () => {
+function createFloor(color, label) {
+    const geometry = new THREE.BoxGeometry(20, 1, 20);
+    const material = new THREE.MeshStandardMaterial({ color: color });
+    const floor = new THREE.Mesh(geometry, material);
+    floor.userData.label = label;
+    return floor;
+}
+
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
 
-// Inverse scroll to navigate floors
-window.addEventListener('wheel', (event) => {
-    camera.position.y += event.deltaY * 0.01;
-});
+function onDoorbellClicked() {
+    // Zoom to ground floor
+    currentFloor = 0;
+    zoomToFloor(currentFloor);
+}
+
+function zoomToFloor(floorIndex) {
+    const targetY = floorIndex * 10;
+    const targetPosition = new THREE.Vector3(0, targetY + 5, 30);
+    animateCamera(targetPosition);
+}
+
+function animateCamera(targetPosition) {
+    new TWEEN.Tween(camera.position)
+        .to(targetPosition, 1000)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start();
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    TWEEN.update();
+    renderer.render(scene, camera);
+}
+
+init();
