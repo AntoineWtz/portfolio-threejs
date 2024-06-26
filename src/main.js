@@ -64,7 +64,7 @@ function createBuilding(floors) {
 }
 
 // Create the building with 10 floors
-const building = createBuilding(10);
+const building = createBuilding(7);
 scene.add(building);
 
 // Add a ground plane
