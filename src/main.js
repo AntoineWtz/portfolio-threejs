@@ -125,6 +125,10 @@ function createSky() {
     createCloud(-50, 20, -50);
     createCloud(20, 40, -80);
     createCloud(-30, 60, -70);
+    createCloud(50, 30, -90);
+    createCloud(10, 70, -50);
+    createCloud(-60, 40, -80);
+    createCloud(40, 60, -70);
 }
 
 function createCloud(x, y, z) {
