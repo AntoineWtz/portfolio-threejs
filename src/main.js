@@ -37,11 +37,17 @@ function init() {
     directionalLight.position.set(10, 10, 10);
     scene.add(directionalLight);
 
+    // Load textures
+    const textureLoader = new THREE.TextureLoader();
+    const brickTexture = textureLoader.load('textures/wall_texture.jpg');
+    const grassTexture = textureLoader.load('textures/grass_texture.jpg');
+    const soilTexture = textureLoader.load('textures/soil_texture.jpg');
+
     // Floating Island
-    createFloatingIsland();
+    createFloatingIsland(grassTexture, soilTexture);
 
     // Building
-    createBuilding();
+    createBuilding(brickTexture);
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
@@ -49,33 +55,33 @@ function init() {
     animate();
 }
 
-function createFloatingIsland() {
+function createFloatingIsland(grassTexture, soilTexture) {
     // Top part of the island (grass)
     const islandTopGeometry = new THREE.CylinderGeometry(50, 50, 5, 32);
-    const islandTopMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+    const islandTopMaterial = new THREE.MeshStandardMaterial({ map: grassTexture });
     const islandTop = new THREE.Mesh(islandTopGeometry, islandTopMaterial);
     islandTop.position.y = 0;
     scene.add(islandTop);
 
     // Bottom part of the island (inverted cone shape)
     const islandBottomGeometry = new THREE.ConeGeometry(50, 30, 32);
-    const islandBottomMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+    const islandBottomMaterial = new THREE.MeshStandardMaterial({ map: soilTexture });
     const islandBottom = new THREE.Mesh(islandBottomGeometry, islandBottomMaterial);
     islandBottom.rotation.x = Math.PI; // Invert the cone
     islandBottom.position.y = -15; // Adjust to make it look connected to the top part
     scene.add(islandBottom);
 }
 
-function createBuilding() {
+function createBuilding(brickTexture) {
     const buildingGeometry = new THREE.BoxGeometry(20, 60, 20);
-    const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0x8B0000 });
+    const buildingMaterial = new THREE.MeshStandardMaterial({ map: brickTexture });
     const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
     building.position.y = 30; // Adjust to be on top of the island
     scene.add(building);
 
     // Adding windows
     const windowGeometry = new THREE.BoxGeometry(4, 4, 0.1);
-    const windowMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB });
+    const windowMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
     for (let y = -20; y <= 20; y += 10) {
         for (let x = -6; x <= 6; x += 6) {
             for (let z = -8; z <= 8; z += 8) {
