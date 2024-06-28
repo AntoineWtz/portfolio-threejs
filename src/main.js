@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-let camera, scene, renderer, controls;
+let camera, scene, renderer, controls, sun;
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function init() {
     // Setup scene
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87CEEB); // Sky blue for day
 
     // Setup camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -39,15 +38,18 @@ function init() {
 
     // Load textures
     const textureLoader = new THREE.TextureLoader();
-    const brickTexture = textureLoader.load('textures/wall_texture.jpg');
-    const grassTexture = textureLoader.load('textures/grass_texture.jpg');
-    const soilTexture = textureLoader.load('textures/soil_texture.jpg');
+    const brickTexture = textureLoader.load('/textures/wall_texture.jpg');
+    const grassTexture = textureLoader.load('/textures/grass_texture.jpg');
+    const soilTexture = textureLoader.load('/textures/soil_texture.jpg');
 
     // Floating Island
     createFloatingIsland(grassTexture, soilTexture);
 
     // Building
     createBuilding(brickTexture);
+
+    // Sky with Sun
+    createSky();
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
@@ -81,7 +83,15 @@ function createBuilding(brickTexture) {
 
     // Adding windows
     const windowGeometry = new THREE.BoxGeometry(4, 4, 0.1);
-    const windowMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
+    const windowMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x9fd2f6,
+        metalness: 0.5,
+        roughness: 0.1,
+        transmission: 0.9,
+        transparent: true,
+        opacity: 0.7
+    });
+
     for (let y = -20; y <= 20; y += 10) {
         for (let x = -6; x <= 6; x += 6) {
             for (let z = -8; z <= 8; z += 8) {
@@ -93,6 +103,36 @@ function createBuilding(brickTexture) {
             }
         }
     }
+}
+
+function createSky() {
+    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+    const skyMaterial = new THREE.MeshBasicMaterial({
+        color: 0x87CEEB,
+        side: THREE.BackSide
+    });
+    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+    scene.add(sky);
+
+    // Sun
+    const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.position.set(100, 100, -100);
+    scene.add(sun);
+
+    // Adding some clouds
+    createCloud(-50, 20, -50);
+    createCloud(20, 40, -80);
+    createCloud(-30, 60, -70);
+}
+
+function createCloud(x, y, z) {
+    const cloudGeometry = new THREE.SphereGeometry(10, 32, 32);
+    const cloudMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+    const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    cloud.position.set(x, y, z);
+    scene.add(cloud);
 }
 
 function onWindowResize() {
