@@ -1,7 +1,11 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-let camera, scene, renderer;
-let currentFloor = 0;
+let camera, scene, renderer, controls;
+
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+});
 
 function init() {
     // Setup scene
@@ -10,59 +14,67 @@ function init() {
 
     // Setup camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 10, 30);
+    camera.position.set(0, 30, 100);
 
     // Setup renderer
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
+    // OrbitControls
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Enable damping (inertia)
+    controls.dampingFactor = 0.25;
+    controls.screenSpacePanning = false; // Disable panning
+    controls.minDistance = 50; // Set minimum zoom distance
+    controls.maxDistance = 200; // Set maximum zoom distance
+
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 10, 10);
+    scene.add(directionalLight);
 
-    // Build the building
+    // Ground
+    const groundGeometry = new THREE.PlaneGeometry(500, 500);
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.5;
+    scene.add(ground);
+
+    // Building
     buildBuilding();
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
-    document.getElementById('doorbell').addEventListener('click', onDoorbellClicked);
 
     animate();
 }
 
 function buildBuilding() {
-    // Ground floor
-    const groundFloor = createFloor(0x9c661f, 'Accueil');
-    groundFloor.position.set(0, 0, 0);
-    scene.add(groundFloor);
+    const buildingGeometry = new THREE.BoxGeometry(20, 60, 20);
+    const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0x8B0000 });
+    const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+    building.position.y = 30; // Center the building on the y-axis
+    scene.add(building);
 
-    // Projects floor
-    const projectsFloor = createFloor(0x7f7f7f, 'Projets');
-    projectsFloor.position.set(0, 10, 0);
-    scene.add(projectsFloor);
-
-    // Experiences floor
-    const experiencesFloor = createFloor(0x4c4c4c, 'Expériences');
-    experiencesFloor.position.set(0, 20, 0);
-    scene.add(experiencesFloor);
-
-    // Contact floor
-    const contactFloor = createFloor(0x2b2b2b, 'Contact');
-    contactFloor.position.set(0, 30, 0);
-    scene.add(contactFloor);
-}
-
-function createFloor(color, label) {
-    const geometry = new THREE.BoxGeometry(20, 1, 20);
-    const material = new THREE.MeshStandardMaterial({ color: color });
-    const floor = new THREE.Mesh(geometry, material);
-    floor.userData.label = label;
-    return floor;
+    // Adding windows
+    const windowGeometry = new THREE.BoxGeometry(4, 4, 0.1);
+    const windowMaterial = new THREE.MeshStandardMaterial({ color: 0x87CEEB });
+    for (let y = 10; y <= 50; y += 10) {
+        for (let x = -6; x <= 6; x += 6) {
+            for (let z = -8; z <= 8; z += 8) {
+                if (x !== 0 || z !== 0) {
+                    const windowMesh = new THREE.Mesh(windowGeometry, windowMaterial);
+                    windowMesh.position.set(x, y, z === 8 ? 10.1 : -10.1);
+                    scene.add(windowMesh);
+                }
+            }
+        }
+    }
 }
 
 function onWindowResize() {
@@ -71,29 +83,8 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function onDoorbellClicked() {
-    // Zoom to ground floor
-    currentFloor = 0;
-    zoomToFloor(currentFloor);
-}
-
-function zoomToFloor(floorIndex) {
-    const targetY = floorIndex * 10;
-    const targetPosition = new THREE.Vector3(0, targetY + 5, 30);
-    animateCamera(targetPosition);
-}
-
-function animateCamera(targetPosition) {
-    new TWEEN.Tween(camera.position)
-        .to(targetPosition, 1000)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .start();
-}
-
 function animate() {
     requestAnimationFrame(animate);
-    TWEEN.update();
+    controls.update(); // Required if controls.enableDamping or controls.autoRotate are set to true
     renderer.render(scene, camera);
 }
-
-init();
