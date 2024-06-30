@@ -1,9 +1,11 @@
+// Importer la fonction addTree depuis Tree.js
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBuilding } from './components/Building';
 import { createCloud } from './components/Cloud';
 import { createFloatingIsland } from './components/FloatingIsland';
 import { createSky } from './components/Sky';
+import { addTree } from './components/Tree'; // Importer la fonction addTree
 
 let camera, scene, renderer, controls;
 
@@ -65,6 +67,9 @@ function init() {
     createCloud(scene, 40, 60, -70);
     createCloud(scene, -70, 30, -90);
     createCloud(scene, 60, 75, -55);
+
+    // Adding the tree
+    addTree(scene, 30, 40, 20); // Ajuster la position comme nécessaire
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
