@@ -1,5 +1,3 @@
-// main.js
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBuilding } from './components/Building';
@@ -7,8 +5,8 @@ import { createCloud } from './components/Cloud';
 import { createFloatingIsland } from './components/FloatingIsland';
 import { createSky } from './components/Sky';
 import { addTree } from './components/Tree';
-import { addCar } from './components/Car'; // Importer la fonction addCar depuis Car.js
-import { addBench } from './components/Bench'; // Importer la fonction addBench depuis Bench.js
+import { addCar } from './components/Car';
+import { addBench } from './components/Bench';
 
 let camera, scene, renderer, controls;
 
@@ -27,17 +25,17 @@ function init() {
     // Setup renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true; // Enable shadow maps
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadows
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     // OrbitControls
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // Enable damping (inertia)
+    controls.enableDamping = true;
     controls.dampingFactor = 0.25;
-    controls.screenSpacePanning = false; // Disable panning
-    controls.minDistance = 50; // Set minimum zoom distance
-    controls.maxDistance = 200; // Set maximum zoom distance
+    controls.screenSpacePanning = false;
+    controls.minDistance = 50;
+    controls.maxDistance = 200;
 
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -71,16 +69,14 @@ function init() {
     createCloud(scene, -70, 30, -90);
     createCloud(scene, 60, 75, -55);
 
-    // Adding the tree
-    addTree(scene, 30, 35, 20); 
+    // Adding trees
+    addTree(scene, 30, 35, 20);
     addTree(scene, -34, 35, 12);
     addTree(scene, 24, 35, -23);
-
-    // Adding the car (position ajustée et rotation appliquée)
-    addCar(scene, -24, 2.5, -5); // Ajuster la position pour qu'elle soit sur la plateforme
-
+    // Add car
+    addCar(scene, -24, 2.5, -5);
     // Add bench
-    addBench(scene, 24, 5, -5); // Ajuster la position pour qu'elle soit sur la plateforme
+    addBench(scene, 24, 5, -5);
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
@@ -96,6 +92,6 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate);
-    controls.update(); // Required if controls.enableDamping or controls.autoRotate are set to true
+    controls.update();
     renderer.render(scene, camera);
 }

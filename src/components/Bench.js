@@ -1,25 +1,20 @@
-// Bench.js
-
-import * as THREE from 'three';
+// import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export function addBench(scene, x, y, z) {
     const loader = new GLTFLoader();
 
     loader.load(
-        '/models/bench.glb', // Chemin vers votre modèle 3D de voiture
+        '/models/bench.glb',
         function (gltf) {
             const bench = gltf.scene;
-            bench.scale.set(4, 4, 4); // Ajuster l'échelle pour doubler la taille de la voiture
-            bench.position.set(x, y, z); // Positionner la voiture
+            bench.scale.set(4, 4, 4);
+            bench.position.set(x, y, z);
 
-            // Rotation bench
-            bench.rotation.y = Math.PI / 2.15 * 3; // En radians, Math.PI est la moitié d'un cercle complet (180 degrés) et Math.PI / 26 * 3 est 60 degrés
+            bench.rotation.y = Math.PI / 2.15 * 3;
 
-            // Ajouter la voiture à la scène
             scene.add(bench);
 
-            // Activer la projection d'ombres pour la voiture
             bench.traverse(function (child) {
                 if (child.isMesh) {
                     child.castShadow = true;

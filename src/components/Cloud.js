@@ -3,18 +3,18 @@ import * as THREE from 'three';
 export function createCloud(scene, x, y, z) {
     const cloudGeometry = new THREE.SphereGeometry(5, 32, 32);
     const cloudMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffffff, // Couleur de base blanche
-        emissive: 0xffffff, // Luminosité supplémentaire pour simuler l'exposition au soleil
-        emissiveIntensity: 0.2, // Intensité de l'émissivité
-        opacity: 0.6, // Transparence
+        color: 0xffffff, 
+        emissive: 0xffffff, 
+        emissiveIntensity: 0.5, 
+        opacity: 0.6,
         transparent: true,
-        depthWrite: false, // Ne pas écrire la profondeur pour un look plus éthéré
-        side: THREE.DoubleSide, // Rendre les deux côtés de la géométrie visibles
+        depthWrite: false, 
+        side: THREE.DoubleSide, // Two faces of the sphere will be visible
     });
 
     const cloudGroup = new THREE.Group();
 
-    // Positions des sphères pour former un nuage
+    // Cloud sphere positions in 3D space
     const spherePositions = [
         { x: 0, y: 0, z: 0 },
         { x: 6, y: 0, z: 0 },
@@ -37,23 +37,23 @@ export function createCloud(scene, x, y, z) {
         { x: 0, y: -3, z: -3 },
     ];
 
-    // Création des sphères de nuage avec le matériau défini
+    // Create cloud spheres and add them to the group
     spherePositions.forEach(pos => {
         const sphere = new THREE.Mesh(cloudGeometry, cloudMaterial);
         sphere.position.set(pos.x, pos.y, pos.z);
-        sphere.castShadow = true; // Activer la projection d'ombres
+        sphere.castShadow = true; // Enable shadows for the cloud spheres
         cloudGroup.add(sphere);
     });
 
-    cloudGroup.position.set(x, y, z); // Position du groupe de nuages
-    scene.add(cloudGroup); // Ajout du groupe à la scène
+    cloudGroup.position.set(x, y, z); // Position the cloud group
+    scene.add(cloudGroup); // Add the cloud group to the scene
 
-    // Ajustement des propriétés de rendu pour les nuages
+    // Adjust the shadows for the cloud group
     cloudGroup.traverse(child => {
         if (child.isMesh) {
-            child.receiveShadow = true; // Assurer que les nuages reçoivent les ombres
-            child.material.shadowSide = THREE.FrontSide; // Préciser le côté des ombres
-            child.material.shadowDarkness = 0.3; // Ajuster l'obscurité des ombres
+            child.receiveShadow = true; // Enable shadows for the cloud spheres
+            child.material.shadowSide = THREE.FrontSide; // Adjust the shadow side
+            child.material.shadowDarkness = 0.3; // Adjust the shadow darkness
         }
     });
 }
