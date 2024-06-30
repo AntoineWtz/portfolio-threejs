@@ -10,7 +10,7 @@ export function addTree(scene, x, y, z) {
             const tree = gltf.scene;
 
             // Ajuster l'échelle pour augmenter la taille de l'arbre
-            tree.scale.set(15, 15, 15); // Par exemple, multiplier par 3
+            tree.scale.set(12, 12, 12); // Par exemple, multiplier par 3
 
             // Positionner l'arbre à côté de l'immeuble
             tree.position.set(x, y - 15, z); // Ajuster la position pour qu'il touche le sol de l'île

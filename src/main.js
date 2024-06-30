@@ -69,7 +69,7 @@ function init() {
     createCloud(scene, 60, 75, -55);
 
     // Adding the tree
-    addTree(scene, 30, 40, 20); // Ajuster la position comme nécessaire
+    addTree(scene, 30, 35, 20); // Ajuster la position comme nécessaire
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
