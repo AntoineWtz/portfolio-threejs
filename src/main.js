@@ -1,11 +1,14 @@
-// Importer la fonction addTree depuis Tree.js
+// main.js
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBuilding } from './components/Building';
 import { createCloud } from './components/Cloud';
 import { createFloatingIsland } from './components/FloatingIsland';
 import { createSky } from './components/Sky';
-import { addTree } from './components/Tree'; // Importer la fonction addTree
+import { addTree } from './components/Tree';
+import { addCar } from './components/Car'; // Importer la fonction addCar depuis Car.js
+import { addBench } from './components/Bench'; // Importer la fonction addBench depuis Bench.js
 
 let camera, scene, renderer, controls;
 
@@ -69,7 +72,15 @@ function init() {
     createCloud(scene, 60, 75, -55);
 
     // Adding the tree
-    addTree(scene, 30, 35, 20); // Ajuster la position comme nécessaire
+    addTree(scene, 30, 35, 20); 
+    addTree(scene, -34, 35, 12);
+    addTree(scene, 24, 35, -23);
+
+    // Adding the car (position ajustée et rotation appliquée)
+    addCar(scene, -24, 2.5, -5); // Ajuster la position pour qu'elle soit sur la plateforme
+
+    // Add bench
+    addBench(scene, 24, 5, -5); // Ajuster la position pour qu'elle soit sur la plateforme
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
