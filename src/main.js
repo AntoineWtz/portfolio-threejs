@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare';
 
 let camera, scene, renderer, controls, sun;
 
@@ -18,6 +19,8 @@ function init() {
     // Setup renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true; // Enable shadow maps
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Soft shadows
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     // OrbitControls
@@ -31,10 +34,6 @@ function init() {
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 10, 10);
-    scene.add(directionalLight);
 
     // Load textures
     const textureLoader = new THREE.TextureLoader();
@@ -63,6 +62,8 @@ function createFloatingIsland(grassTexture, soilTexture) {
     const islandTopMaterial = new THREE.MeshStandardMaterial({ map: grassTexture });
     const islandTop = new THREE.Mesh(islandTopGeometry, islandTopMaterial);
     islandTop.position.y = 0;
+    islandTop.castShadow = true; // Enable shadow casting
+    islandTop.receiveShadow = true; // Enable shadow receiving
     scene.add(islandTop);
 
     // Bottom part of the island (inverted cone shape)
@@ -71,6 +72,8 @@ function createFloatingIsland(grassTexture, soilTexture) {
     const islandBottom = new THREE.Mesh(islandBottomGeometry, islandBottomMaterial);
     islandBottom.rotation.x = Math.PI; // Invert the cone
     islandBottom.position.y = -15; // Adjust to make it look connected to the top part
+    islandBottom.castShadow = true; // Enable shadow casting
+    islandBottom.receiveShadow = true; // Enable shadow receiving
     scene.add(islandBottom);
 }
 
@@ -79,6 +82,8 @@ function createBuilding(brickTexture) {
     const buildingMaterial = new THREE.MeshStandardMaterial({ map: brickTexture });
     const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
     building.position.y = 30; // Adjust to be on top of the island
+    building.castShadow = true; // Enable shadow casting
+    building.receiveShadow = true; // Enable shadow receiving
     scene.add(building);
 
     // Adding windows
@@ -98,6 +103,8 @@ function createBuilding(brickTexture) {
                 if (x !== 0 || z !== 0) {
                     const windowMesh = new THREE.Mesh(windowGeometry, windowMaterial);
                     windowMesh.position.set(x, y, z === 8 ? 10.1 : -10.1);
+                    windowMesh.castShadow = true; // Enable shadow casting
+                    windowMesh.receiveShadow = true; // Enable shadow receiving
                     building.add(windowMesh);
                 }
             }
@@ -115,11 +122,40 @@ function createSky() {
     scene.add(sky);
 
     // Sun
-    const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const sunGeometry = new THREE.SphereGeometry(12, 32, 32);
     const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
     sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    sun.position.set(100, 100, -100);
+    sun.position.set(120, 150, -200); // Position on the right and further back
     scene.add(sun);
+
+    // Lensflare textures
+    const textureFlare0 = new THREE.TextureLoader().load('/textures/lensflare0.png');
+    const textureFlare3 = new THREE.TextureLoader().load('/textures/lensflare3.png');
+
+    const lensflare = new Lensflare();
+    lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, sunMaterial.color));
+    lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
+    lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
+    lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
+    lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
+
+    sun.add(lensflare);
+
+    // Directional light from the sun
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+    sunLight.position.set(120, 150, -200);
+    sunLight.castShadow = true; // Enable shadow casting
+    scene.add(sunLight);
+
+    // Configure shadow properties for the directional light
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 500;
+    sunLight.shadow.camera.left = -200;
+    sunLight.shadow.camera.right = 200;
+    sunLight.shadow.camera.top = 200;
+    sunLight.shadow.camera.bottom = -200;
 
     // Adding some clouds
     createCloud(-50, 20, -50);
@@ -128,15 +164,42 @@ function createSky() {
     createCloud(50, 30, -90);
     createCloud(10, 70, -50);
     createCloud(-60, 40, -80);
+    createCloud(20, 100, -80);
+    createCloud(-40, 95, -80);
     createCloud(40, 60, -70);
+    createCloud(-70, 30, -90);
+    createCloud(60, 75, -55);
 }
 
 function createCloud(x, y, z) {
-    const cloudGeometry = new THREE.SphereGeometry(10, 32, 32);
-    const cloudMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
-    const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
-    cloud.position.set(x, y, z);
-    scene.add(cloud);
+    const cloudGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const cloudMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        opacity: 0.9,
+        transparent: true
+    });
+
+    const cloudGroup = new THREE.Group();
+
+    // Add multiple spheres to form a cloud
+    const spherePositions = [
+        { x: 0, y: 0, z: 0 },
+        { x: 6, y: 0, z: 0 },
+        { x: -6, y: 0, z: 0 },
+        { x: 3, y: 3, z: 0 },
+        { x: -3, y: 3, z: 0 },
+        { x: 3, y: -3, z: 0 },
+        { x: -3, y: -3, z: 0 }
+    ];
+
+    spherePositions.forEach(pos => {
+        const sphere = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        sphere.position.set(pos.x, pos.y, pos.z);
+        cloudGroup.add(sphere);
+    });
+
+    cloudGroup.position.set(x, y, z);
+    scene.add(cloudGroup);
 }
 
 function onWindowResize() {
