@@ -1,4 +1,3 @@
-// import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export function addStreetLight(scene, x, y, z) {

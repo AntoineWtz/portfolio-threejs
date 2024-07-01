@@ -1,10 +1,9 @@
-// main.js
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { createBuilding } from './components/Building';
 import { createCloud } from './components/Cloud';
 import { createFloatingIsland } from './components/FloatingIsland';
+import { createBuilding } from './components/Building';
 import { createSky } from './components/Sky';
 import { addTree } from './components/Tree';
 import { addCar } from './components/Car';
@@ -46,7 +45,6 @@ function init() {
 
     // Load textures
     const textureLoader = new THREE.TextureLoader();
-    const brickTexture = textureLoader.load('/textures/wall_texture.jpg');
     const grassTexture = textureLoader.load('/textures/grass_texture.jpg');
     const soilTexture = textureLoader.load('/textures/soil_texture.jpg');
 
@@ -54,35 +52,50 @@ function init() {
     createFloatingIsland(scene, grassTexture, soilTexture);
 
     // Building
-    createBuilding(scene, brickTexture);
+    createBuilding(scene);
 
     // Sky with Sun
-    createSky(scene); // Appeler createSky sans passer la caméra
+    createSky(scene);
 
-    // Adding some clouds
-    createCloud(scene, -50, 20, -50);
-    createCloud(scene, 20, 40, -80);
-    createCloud(scene, -30, 60, -70);
-    createCloud(scene, 50, 30, -90);
-    createCloud(scene, 10, 70, -50);
-    createCloud(scene, -60, 40, -80);
-    createCloud(scene, 20, 100, -80);
-    createCloud(scene, -40, 95, -80);
-    createCloud(scene, 40, 60, -70);
-    createCloud(scene, -70, 30, -90);
-    createCloud(scene, 60, 75, -55);
-    createCloud(scene, 35, 70, -90);
+    // Adding random clouds using createCloud function
+    const numClouds = 50; // Number of random clouds to create
+
+    const cloudRadius = 300; // Radius within which clouds will be generated, adjust as needed
+
+    for (let i = 0; i < numClouds; i++) {
+        const x = Math.random() * cloudRadius * 2 - cloudRadius; // Random x position within cloudRadius
+        let y, z;
+
+        // Random y position: higher likelihood of being above or below the island
+        const randY = Math.random();
+        if (randY < 0.3) {
+            y = Math.random() * 50 + 90; // Top of the scene, above the island
+        } else if (randY < 0.6) {
+            y = Math.random() * 30 + 30; // Middle of the scene, around the island
+        } else {
+            y = Math.random() * 30 - 20; // Bottom of the scene, below the island
+        }
+
+        // Random z position within cloudRadius
+        z = Math.random() * cloudRadius * 2 - cloudRadius;
+
+        createCloud(scene, x, y, z);
+    }
+
 
     // Adding trees
-    addTree(scene, 30, 35, 20);
-    addTree(scene, -34, 35, 12);
-    addTree(scene, 24, 35, -23);
+    addTree(scene, 40, 39, 25);
+    addTree(scene, -44, 39, 12);
+    addTree(scene, 34, 39, -23);
+
     // Add car
-    addCar(scene, -24, 2.5, -5);
+    addCar(scene, -24, 3.5, -5);
+
     // Add bench
-    addBench(scene, 24, 5, -5);
+    addBench(scene, 24, 6.5, -5);
+
     // Add street light
-    addStreetLight(scene, 22, 2, 6);
+    addStreetLight(scene, 22, 3, 6);
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
