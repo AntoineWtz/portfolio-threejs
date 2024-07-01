@@ -1,4 +1,3 @@
-// FloatingIsland.js
 
 import * as THREE from 'three';
 
