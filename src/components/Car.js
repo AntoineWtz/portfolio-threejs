@@ -1,25 +1,22 @@
-// Car.js
-
-import * as THREE from 'three';
+// import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export function addCar(scene, x, y, z) {
     const loader = new GLTFLoader();
 
     loader.load(
-        '/models/car.glb', // Chemin vers votre modèle 3D de voiture
+        '/models/car.glb', // Link to the 3D model of the car
         function (gltf) {
             const car = gltf.scene;
-            car.scale.set(4, 4, 4); // Ajuster l'échelle pour doubler la taille de la voiture
-            car.position.set(x, y, z); // Positionner la voiture
+            car.scale.set(4, 4, 4); // Adjust the size of the car
+            car.position.set(x, y, z); // Adjust the position of the car
 
-            // Rotation de la voiture d'environ 15 degrés vers sa droite
-            car.rotation.y = Math.PI / 12; // En radians, Math.PI est la moitié d'un cercle complet (180 degrés)
+            car.rotation.y = Math.PI / 12; // Rotate the car
 
-            // Ajouter la voiture à la scène
+            // Add the car to the scene
             scene.add(car);
 
-            // Activer la projection d'ombres pour la voiture
+            // Activate shadows for the car
             car.traverse(function (child) {
                 if (child.isMesh) {
                     child.castShadow = true;
