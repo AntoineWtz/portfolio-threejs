@@ -71,6 +71,7 @@ function init() {
     createCloud(scene, 40, 60, -70);
     createCloud(scene, -70, 30, -90);
     createCloud(scene, 60, 75, -55);
+    createCloud(scene, 35, 70, -90);
 
     // Adding trees
     addTree(scene, 30, 35, 20);
