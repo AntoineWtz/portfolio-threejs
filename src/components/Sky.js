@@ -14,7 +14,7 @@ export function createSky(scene) {
     const sunGeometry = new THREE.SphereGeometry(12, 32, 32);
     const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
     const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    sun.position.set(120, 150, -200); 
+    sun.position.set(120, 150, -200);
     scene.add(sun);
 
     // Lensflare textures
@@ -33,7 +33,7 @@ export function createSky(scene) {
     // Directional light from the sun
     const sunLight = new THREE.DirectionalLight(0xffffff, 1);
     sunLight.position.set(120, 150, -200);
-    sunLight.castShadow = true; 
+    sunLight.castShadow = true;
     scene.add(sunLight);
 
     // Configure shadow properties for the directional light
@@ -47,6 +47,6 @@ export function createSky(scene) {
     sunLight.shadow.camera.bottom = -200;
 
     // Adjust shadow darkness
-    sunLight.shadow.bias = -0.0001; 
-    sunLight.shadow.darkness = 0.3; 
+    sunLight.shadow.bias = -0.0001;
+    sunLight.shadow.darkness = 0.3;
 }

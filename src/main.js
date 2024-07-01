@@ -1,3 +1,5 @@
+// main.js
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createBuilding } from './components/Building';
@@ -7,6 +9,7 @@ import { createSky } from './components/Sky';
 import { addTree } from './components/Tree';
 import { addCar } from './components/Car';
 import { addBench } from './components/Bench';
+import { addStreetLight } from './components/StreetLight';
 
 let camera, scene, renderer, controls;
 
@@ -54,7 +57,7 @@ function init() {
     createBuilding(scene, brickTexture);
 
     // Sky with Sun
-    createSky(scene);
+    createSky(scene); // Appeler createSky sans passer la caméra
 
     // Adding some clouds
     createCloud(scene, -50, 20, -50);
@@ -77,6 +80,8 @@ function init() {
     addCar(scene, -24, 2.5, -5);
     // Add bench
     addBench(scene, 24, 5, -5);
+    // Add street light
+    addStreetLight(scene, 22, 2, 6);
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
