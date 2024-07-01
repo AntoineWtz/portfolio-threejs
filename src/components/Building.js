@@ -1,36 +1,24 @@
-import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-export function createBuilding(scene, brickTexture) {
-    const buildingGeometry = new THREE.BoxGeometry(20, 60, 20);
-    const buildingMaterial = new THREE.MeshStandardMaterial({ map: brickTexture });
-    const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
-    building.position.y = 30; // Adjust to be on top of the island
-    building.castShadow = true; // Enable shadow casting
-    building.receiveShadow = true; // Enable shadow receiving
-    scene.add(building);
+export function createBuilding(scene) {
+    // Load GLTF model
+    const loader = new GLTFLoader();
+    loader.load('/models/building.glb', (gltf) => {
+        const building = gltf.scene;
+        building.position.set(0, 3, 0); // Adjust the position to be on top of the island
+        building.scale.set(30, 35, 30); // Adjust the scale if necessary
+        building.rotation.y = Math.PI; // Rotate 180 degrees (π radians)
 
-    // Adding windows
-    const windowGeometry = new THREE.BoxGeometry(4, 4, 0.1);
-    const windowMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x9fd2f6,
-        metalness: 0.5,
-        roughness: 0.1,
-        transmission: 0.9,
-        transparent: true,
-        opacity: 0.7
-    });
-
-    for (let y = -20; y <= 20; y += 10) {
-        for (let x = -6; x <= 6; x += 6) {
-            for (let z = -8; z <= 8; z += 8) {
-                if (x !== 0 || z !== 0) {
-                    const windowMesh = new THREE.Mesh(windowGeometry, windowMaterial);
-                    windowMesh.position.set(x, y, z === 8 ? 10.1 : -10.1);
-                    windowMesh.castShadow = true; // Enable shadow casting
-                    windowMesh.receiveShadow = true; // Enable shadow receiving
-                    building.add(windowMesh);
-                }
+        // Traverse the model to set castShadow and receiveShadow
+        building.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
             }
-        }
-    }
+        });
+
+        scene.add(building);
+    }, undefined, (error) => {
+        console.error('An error happened while loading the building model:', error);
+    });
 }
