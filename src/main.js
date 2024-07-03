@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createCloud } from './components/Cloud';
@@ -11,9 +10,12 @@ import { addBench } from './components/Bench';
 import { addStreetLight } from './components/StreetLight';
 
 let camera, scene, renderer, controls;
+let sun, sky, sunLight, clouds = [];
+let isNight = false; // Track current mode
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
+    addToggleEventListener();
 });
 
 function init() {
@@ -55,33 +57,13 @@ function init() {
     createBuilding(scene);
 
     // Sky with Sun
-    createSky(scene);
+    const skyComponents = createSky(scene);
+    sky = skyComponents.sky;
+    sun = skyComponents.sun;
+    sunLight = skyComponents.sunLight;
 
-    // Adding random clouds using createCloud function
-    const numClouds = 50; // Number of random clouds to create
-
-    const cloudRadius = 300; // Radius within which clouds will be generated, adjust as needed
-
-    for (let i = 0; i < numClouds; i++) {
-        const x = Math.random() * cloudRadius * 2 - cloudRadius; // Random x position within cloudRadius
-        let y, z;
-
-        // Random y position: higher likelihood of being above or below the island
-        const randY = Math.random();
-        if (randY < 0.3) {
-            y = Math.random() * 50 + 90; // Top of the scene, above the island
-        } else if (randY < 0.6) {
-            y = Math.random() * 30 + 30; // Middle of the scene, around the island
-        } else {
-            y = Math.random() * 30 - 20; // Bottom of the scene, below the island
-        }
-
-        // Random z position within cloudRadius
-        z = Math.random() * cloudRadius * 2 - cloudRadius;
-
-        createCloud(scene, x, y, z);
-    }
-
+    // Adding random clouds
+    createRandomClouds(scene);
 
     // Adding trees
     addTree(scene, 40, 39, 25);
@@ -113,4 +95,74 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
+}
+
+function createRandomClouds(scene) {
+    const numClouds = 50; // Number of random clouds to create
+
+    const cloudRadius = 300; // Radius within which clouds will be generated, adjust as needed
+
+    for (let i = 0; i < numClouds; i++) {
+        const x = Math.random() * cloudRadius * 2 - cloudRadius; // Random x position within cloudRadius
+        let y, z;
+
+        // Random y position: higher likelihood of being above or below the island
+        const randY = Math.random();
+        if (randY < 0.3) {
+            y = Math.random() * 100 + 100; // Top of the scene, far above the island
+        } else if (randY < 0.6) {
+            y = Math.random() * 60 + 30; // Middle of the scene, around the island
+        } else {
+            y = Math.random() * 100 - 50; // Bottom of the scene, far below the island
+        }
+
+        // Random z position within cloudRadius
+        z = Math.random() * cloudRadius * 2 - cloudRadius;
+
+        const cloud = createCloud(scene, x, y, z);
+        clouds.push(cloud); // Store reference to each cloud
+    }
+}
+
+function addToggleEventListener() {
+    const toggleButton = document.getElementById('toggle-day-night');
+    toggleButton.addEventListener('change', (event) => {
+        isNight = event.target.checked;
+        toggleDayNight();
+    });
+}
+
+function toggleDayNight() {
+    if (isNight) {
+        // Change to night mode
+        sun.material.color.set(0xffffff);
+        sunLight.intensity = 0.5; // Reduce sun light intensity
+        sky.material.map.image.getContext('2d').fillStyle = '#000033';
+        sky.material.map.needsUpdate = true; // Dark blue sky
+        // Change cloud color to gray
+        clouds.forEach(cloud => {
+            cloud.traverse(child => {
+                if (child.isMesh) {
+                    child.material.color.set(0x888888);
+                }
+            });
+        });
+    } else {
+        // Change to day mode
+        sun.material.color.set(0xffff00);
+        sunLight.intensity = 1; // Restore sun light intensity
+        sky.material.map.image.getContext('2d').fillStyle = '#65AFFF';
+        sky.material.map.image.getContext('2d').fillRect(0, 0, 2, 2);
+        sky.material.map.image.getContext('2d').fillStyle = '#1E90FF';
+        sky.material.map.image.getContext('2d').fillRect(0, 1, 2, 1);
+        sky.material.map.needsUpdate = true; // Restore daytime sky
+        // Change cloud color to white
+        clouds.forEach(cloud => {
+            cloud.traverse(child => {
+                if (child.isMesh) {
+                    child.material.color.set(0xffffff);
+                }
+            });
+        });
+    }
 }

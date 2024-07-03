@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare';
 
@@ -10,8 +9,8 @@ export function createSky(scene) {
     skyCanvas.height = 2;
     const context = skyCanvas.getContext('2d');
     const gradient = context.createLinearGradient(0, 0, 0, skyCanvas.height);
-    gradient.addColorStop(0, '#65AFFF'); 
-    gradient.addColorStop(1, '#1E90FF'); 
+    gradient.addColorStop(0, '#65AFFF');
+    gradient.addColorStop(1, '#1E90FF');
     context.fillStyle = gradient;
     context.fillRect(0, 0, skyCanvas.width, skyCanvas.height);
     const skyTexture = new THREE.Texture(skyCanvas);
@@ -63,4 +62,6 @@ export function createSky(scene) {
     // Adjust shadow darkness
     sunLight.shadow.bias = -0.0001;
     sunLight.shadow.darkness = 0.3;
+
+    return { sky, sun, sunLight }; // Return references
 }
