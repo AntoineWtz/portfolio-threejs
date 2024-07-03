@@ -1,7 +1,7 @@
 import { initializeScene } from './scene';
 
 let isNight = false;
-let { scene, camera, renderer, controls, sky, sun, sunLight, clouds } = initializeScene();
+const { scene, camera, renderer, controls, sky, sun, sunLight, clouds } = initializeScene();
 
 document.addEventListener('DOMContentLoaded', () => {
     addToggleEventListener();
@@ -17,52 +17,38 @@ function addToggleEventListener() {
 }
 
 function toggleDayNight() {
+    const skyContext = sky.material.map.image.getContext('2d');
+    skyContext.clearRect(0, 0, 2, 2);
+    const gradient = skyContext.createLinearGradient(0, 0, 0, 2);
+
     if (isNight) {
-        // Change to night mode
         sun.material.color.set(0xffffff);
         sunLight.intensity = 0.5;
-        sky.material.map.image.getContext('2d').clearRect(0, 0, 2, 2);
-        const context = sky.material.map.image.getContext('2d');
-        const gradient = context.createLinearGradient(0, 0, 0, 2);
         gradient.addColorStop(0, '#333333');
         gradient.addColorStop(1, '#220033');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, 2, 2);
-        sky.material.map.needsUpdate = true;
-
-        // Change cloud color to very dark gray
-        clouds.forEach(cloud => {
-            if (cloud) {
-                cloud.children.forEach(sphere => {
-                    sphere.material.color.set(0x6E8387);
-                });
-            }
-        });
+        updateCloudColor(0x6E8387);
     } else {
-        // Change to day mode
         sun.material.color.set(0xffff00);
         sunLight.intensity = 1;
-        sky.material.map.image.getContext('2d').clearRect(0, 0, 2, 2);
-        const context = sky.material.map.image.getContext('2d');
-        const gradient = context.createLinearGradient(0, 0, 0, 2);
         gradient.addColorStop(0, '#65AFFF');
         gradient.addColorStop(1, '#1E90FF');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, 2, 2);
-        sky.material.map.needsUpdate = true;
-
-        // Restore cloud color to white
-        clouds.forEach(cloud => {
-            if (cloud) {
-                cloud.children.forEach(sphere => {
-                    sphere.material.color.set(0xffffff);
-                });
-            }
-        });
+        updateCloudColor(0xffffff);
     }
+
+    skyContext.fillStyle = gradient;
+    skyContext.fillRect(0, 0, 2, 2);
+    sky.material.map.needsUpdate = true;
 }
 
-
+function updateCloudColor(color) {
+    clouds.forEach(cloud => {
+        if (cloud) {
+            cloud.children.forEach(sphere => {
+                sphere.material.color.set(color);
+            });
+        }
+    });
+}
 
 function animate() {
     requestAnimationFrame(animate);
