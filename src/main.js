@@ -1,7 +1,7 @@
 import { initializeScene } from './scene';
 
 let isNight = false;
-let { scene, camera, renderer, controls, sky, sun, sunLight, lensflare, textureMoon, clouds } = initializeScene();
+let { scene, camera, renderer, controls, sky, sun, sunLight, clouds } = initializeScene();
 
 document.addEventListener('DOMContentLoaded', () => {
     addToggleEventListener();
@@ -30,11 +30,6 @@ function toggleDayNight() {
         context.fillRect(0, 0, 2, 2);
         sky.material.map.needsUpdate = true;
 
-        // Remove lensflare from the moon
-        if (lensflare) {
-            sun.remove(lensflare); // Remove lensflare from the sun
-        }
-
         // Change cloud color to very dark gray
         clouds.forEach(cloud => {
             if (cloud) {
@@ -55,11 +50,6 @@ function toggleDayNight() {
         context.fillStyle = gradient;
         context.fillRect(0, 0, 2, 2);
         sky.material.map.needsUpdate = true;
-
-        // Restore lensflare to the sun if previously removed
-        if (lensflare && !sun.children.includes(lensflare)) {
-            sun.add(lensflare); // Restore lensflare to the sun if it was removed
-        }
 
         // Restore cloud color to white
         clouds.forEach(cloud => {
