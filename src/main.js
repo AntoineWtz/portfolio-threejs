@@ -30,16 +30,16 @@ function toggleDayNight() {
         context.fillRect(0, 0, 2, 2);
         sky.material.map.needsUpdate = true;
 
-        // Remove lensflare
-        sun.remove(lensflare);
+        // Remove lensflare from the moon
+        if (lensflare) {
+            sun.remove(lensflare); // Remove lensflare from the sun
+        }
 
         // Change cloud color to very dark gray
         clouds.forEach(cloud => {
             if (cloud) {
-                cloud.traverse(child => {
-                    if (child.isMesh) {
-                        child.material.color.set(0x111111);
-                    }
+                cloud.children.forEach(sphere => {
+                    sphere.material.color.set(0x6E8387);
                 });
             }
         });
@@ -56,21 +56,23 @@ function toggleDayNight() {
         context.fillRect(0, 0, 2, 2);
         sky.material.map.needsUpdate = true;
 
-        // Remove lensflare
-        sun.remove(lensflare);
+        // Restore lensflare to the sun if previously removed
+        if (lensflare && !sun.children.includes(lensflare)) {
+            sun.add(lensflare); // Restore lensflare to the sun if it was removed
+        }
 
         // Restore cloud color to white
         clouds.forEach(cloud => {
             if (cloud) {
-                cloud.traverse(child => {
-                    if (child.isMesh) {
-                        child.material.color.set(0xffffff);
-                    }
+                cloud.children.forEach(sphere => {
+                    sphere.material.color.set(0xffffff);
                 });
             }
         });
     }
 }
+
+
 
 function animate() {
     requestAnimationFrame(animate);
