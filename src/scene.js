@@ -12,7 +12,7 @@ import { createGarage } from './components/Garage';
 import { addRock } from './components/Rock';
 
 let camera, scene, renderer, controls;
-let sun, sky, sunLight, lensflare, textureMoon, clouds = [];
+let sun, sky, sunLight, clouds = [];
 
 export function initializeScene() {
     // Setup scene
@@ -71,7 +71,7 @@ export function initializeScene() {
     addCar(scene, -21.5, 3.5, -1);
 
     // Add garage
-    createGarage(scene, -22, 3.5, 0); 
+    createGarage(scene, -22, 3.5, 0);
 
     // Add bench
     addBench(scene, 24, 6.5, -5);
@@ -80,14 +80,14 @@ export function initializeScene() {
     addStreetLight(scene, 22, 3, 6);
 
     // Add rock
-    addRock(scene, 7, 3.5, -45); 
+    addRock(scene, 7, 3.5, -45);
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
 
     // Return important scene components
     return {
-        scene, camera, renderer, controls, sky, sun, sunLight, lensflare, textureMoon, clouds
+        scene, camera, renderer, controls, sky, sun, sunLight, clouds
     };
 }
 

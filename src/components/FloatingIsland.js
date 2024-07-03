@@ -16,7 +16,7 @@ export function createFloatingIsland(scene, grassTexture, soilTexture) {
     const islandBottomMaterial = new THREE.MeshStandardMaterial({ map: soilTexture });
     const islandBottom = new THREE.Mesh(islandBottomGeometry, islandBottomMaterial);
     islandBottom.rotation.x = Math.PI;
-    islandBottom.position.y = -23; // Ajuster la position
+    islandBottom.position.y = -23; 
     islandBottom.castShadow = true;
     islandBottom.receiveShadow = true;
     scene.add(islandBottom);
