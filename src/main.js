@@ -10,7 +10,7 @@ import { addBench } from './components/Bench';
 import { addStreetLight } from './components/StreetLight';
 
 let camera, scene, renderer, controls;
-let sun, sky, sunLight, clouds = [];
+let sun, sky, sunLight, lensflare, textureMoon, clouds = [];
 let isNight = false; // Track current mode
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -61,6 +61,8 @@ function init() {
     sky = skyComponents.sky;
     sun = skyComponents.sun;
     sunLight = skyComponents.sunLight;
+    lensflare = skyComponents.lensflare;
+    textureMoon = skyComponents.textureMoon;
 
     // Adding random clouds
     createRandomClouds(scene);
@@ -98,9 +100,8 @@ function animate() {
 }
 
 function createRandomClouds(scene) {
-    const numClouds = 50; // Number of random clouds to create
-
-    const cloudRadius = 300; // Radius within which clouds will be generated, adjust as needed
+    const numClouds = 50; 
+    const cloudRadius = 300; 
 
     for (let i = 0; i < numClouds; i++) {
         const x = Math.random() * cloudRadius * 2 - cloudRadius; // Random x position within cloudRadius
@@ -137,8 +138,21 @@ function toggleDayNight() {
         // Change to night mode
         sun.material.color.set(0xffffff);
         sunLight.intensity = 0.5; // Reduce sun light intensity
-        sky.material.map.image.getContext('2d').fillStyle = '#000033';
-        sky.material.map.needsUpdate = true; // Dark blue sky
+        sky.material.map.image.getContext('2d').clearRect(0, 0, 2, 2);
+        const context = sky.material.map.image.getContext('2d');
+        const gradient = context.createLinearGradient(0, 0, 0, 2);
+        gradient.addColorStop(0, '#232C33'); // Très foncé bleu
+        gradient.addColorStop(1, '#220033'); // Très foncé violet
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 2, 2);
+        sky.material.map.needsUpdate = true; // Update sky texture
+
+        // Replace lensflare elements with moon texture
+        sun.remove(lensflare);
+        lensflare = new Lensflare();
+        lensflare.addElement(new LensflareElement(textureMoon, 700, 0, sunMaterial.color));
+        sun.add(lensflare);
+
         // Change cloud color to gray
         clouds.forEach(cloud => {
             cloud.traverse(child => {
@@ -151,16 +165,32 @@ function toggleDayNight() {
         // Change to day mode
         sun.material.color.set(0xffff00);
         sunLight.intensity = 1; // Restore sun light intensity
-        sky.material.map.image.getContext('2d').fillStyle = '#65AFFF';
-        sky.material.map.image.getContext('2d').fillRect(0, 0, 2, 2);
-        sky.material.map.image.getContext('2d').fillStyle = '#1E90FF';
-        sky.material.map.image.getContext('2d').fillRect(0, 1, 2, 1);
+        sky.material.map.image.getContext('2d').clearRect(0, 0, 2, 2);
+        const context = sky.material.map.image.getContext('2d');
+        const gradient = context.createLinearGradient(0, 0, 0, 2);
+        gradient.addColorStop(0, '#65AFFF');
+        gradient.addColorStop(1, '#1E90FF');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 2, 2);
         sky.material.map.needsUpdate = true; // Restore daytime sky
+
+        // Replace lensflare elements with sun texture
+        sun.remove(lensflare);
+        lensflare = new Lensflare();
+        const textureFlare0 = new THREE.TextureLoader().load('/textures/lensflare0.png');
+        const textureFlare3 = new THREE.TextureLoader().load('/textures/lensflare3.png');
+        lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, sunMaterial.color));
+        lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
+        lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
+        lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
+        lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
+        sun.add(lensflare);
+
         // Change cloud color to white
         clouds.forEach(cloud => {
             cloud.traverse(child => {
                 if (child.isMesh) {
-                    child.material.color.set(0xffffff);
+                    child.material.color.set(0x000000);
                 }
             });
         });

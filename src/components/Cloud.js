@@ -6,7 +6,7 @@ export function createCloud(scene, x, y, z) {
         color: 0xffffff, 
         emissive: 0xffffff, 
         emissiveIntensity: 0.5, 
-        opacity: 0.6,
+        opacity: 0.39,
         transparent: true,
         depthWrite: false, 
         side: THREE.DoubleSide, // Two faces of the sphere will be visible

@@ -33,6 +33,7 @@ export function createSky(scene) {
     // Lensflare textures
     const textureFlare0 = new THREE.TextureLoader().load('/textures/lensflare0.png');
     const textureFlare3 = new THREE.TextureLoader().load('/textures/lensflare3.png');
+    const textureMoon = new THREE.TextureLoader().load('/textures/moon.jpg'); 
 
     const lensflare = new Lensflare();
     lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, sunMaterial.color));
@@ -63,5 +64,5 @@ export function createSky(scene) {
     sunLight.shadow.bias = -0.0001;
     sunLight.shadow.darkness = 0.3;
 
-    return { sky, sun, sunLight }; // Return references
+    return { sky, sun, sunLight, lensflare, textureMoon }; // Return references
 }
