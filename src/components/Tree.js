@@ -5,14 +5,14 @@ export function addTree(scene, x, y, z) {
     const loader = new GLTFLoader();
 
     loader.load(
-        '/models/tree.glb', 
+        '/models/tree.glb',
         function (gltf) {
             const tree = gltf.scene;
 
-            tree.scale.set(12, 12, 12);
+            tree.scale.set(16, 16, 16);
 
             // Adjust the position of the tree
-            tree.position.set(x, y - 15, z); 
+            tree.position.set(x, y - 8, z);
 
             // Add the tree to the scene
             scene.add(tree);

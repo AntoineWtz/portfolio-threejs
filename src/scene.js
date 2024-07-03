@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { createCloud } from './components/Cloud';
@@ -9,6 +8,8 @@ import { addTree } from './components/Tree';
 import { addCar } from './components/Car';
 import { addBench } from './components/Bench';
 import { addStreetLight } from './components/StreetLight';
+import { createGarage } from './components/Garage';
+import { addRock } from './components/Rock';
 
 let camera, scene, renderer, controls;
 let sun, sky, sunLight, lensflare, textureMoon, clouds = [];
@@ -64,15 +65,22 @@ export function initializeScene() {
     addTree(scene, 40, 39, 25);
     addTree(scene, -44, 39, 12);
     addTree(scene, 34, 39, -23);
+    addTree(scene, -40, 39, -30);
 
     // Add car
-    addCar(scene, -24, 3.5, -5);
+    addCar(scene, -21.5, 3.5, -1);
+
+    // Add garage
+    createGarage(scene, -22, 3.5, 0); 
 
     // Add bench
     addBench(scene, 24, 6.5, -5);
 
     // Add street light
     addStreetLight(scene, 22, 3, 6);
+
+    // Add rock
+    addRock(scene, 7, 3.5, -45); 
 
     // Event listeners
     window.addEventListener('resize', onWindowResize);
@@ -90,27 +98,31 @@ function onWindowResize() {
 }
 
 function createRandomClouds(scene) {
-    const numClouds = 50;
-    const cloudRadius = 300;
+    const numClouds = 120;
+    const cloudRadius = 400;
+    const cloudHeightRange = 500;
 
     for (let i = 0; i < numClouds; i++) {
-        const x = Math.random() * cloudRadius * 2 - cloudRadius;
-        let y, z;
+        let x, y, z;
 
-        // Random y position: higher likelihood of being above or below the island
-        const randY = Math.random();
-        if (randY < 0.3) {
-            y = Math.random() * 100 + 100;
-        } else if (randY < 0.6) {
-            y = Math.random() * 60 + 30;
-        } else {
-            y = Math.random() * 100 - 50;
-        }
-
-        // Random z position within cloudRadius
-        z = Math.random() * cloudRadius * 2 - cloudRadius;
+        // Assurer que les nuages sont placés à une certaine distance du centre
+        do {
+            x = Math.random() * cloudRadius * 2 - cloudRadius;
+            y = Math.random() * cloudHeightRange * 2 - cloudHeightRange;
+            z = Math.random() * cloudRadius * 2 - cloudRadius;
+        } while (Math.sqrt(x * x + y * y + z * z) < 100);
 
         const cloud = createCloud(scene, x, y, z);
         clouds.push(cloud);
+
+        // Créer des nuages supplémentaires à proximité pour des formations plus grandes
+        const extraClouds = Math.random() < 0.3 ? Math.floor(Math.random() * 3) + 1 : 0;
+        for (let j = 0; j < extraClouds; j++) {
+            const offsetX = (Math.random() - 0.5) * 60;
+            const offsetY = (Math.random() - 0.5) * 60;
+            const offsetZ = (Math.random() - 0.5) * 60;
+            const extraCloud = createCloud(scene, x + offsetX, y + offsetY, z + offsetZ);
+            clouds.push(extraCloud);
+        }
     }
 }
