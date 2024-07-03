@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare';
 
 export function createSky(scene) {
     const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
@@ -30,19 +29,6 @@ export function createSky(scene) {
     sun.position.set(120, 150, -200);
     scene.add(sun);
 
-    // Lensflare textures
-    const textureFlare0 = new THREE.TextureLoader().load('/textures/lensflare0.png');
-    const textureFlare3 = new THREE.TextureLoader().load('/textures/lensflare3.png');
-    const textureMoon = new THREE.TextureLoader().load('/textures/moon.jpg'); 
-
-    const lensflare = new Lensflare();
-    lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, sunMaterial.color));
-    lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
-    lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
-    lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
-    lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
-
-    sun.add(lensflare);
 
     // Directional light from the sun
     const sunLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -64,5 +50,5 @@ export function createSky(scene) {
     sunLight.shadow.bias = -0.0001;
     sunLight.shadow.darkness = 0.3;
 
-    return { sky, sun, sunLight, lensflare, textureMoon }; // Return references
+    return { sky, sun, sunLight };
 }

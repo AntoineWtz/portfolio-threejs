@@ -3,10 +3,10 @@ import * as THREE from 'three';
 export function createCloud(scene, x, y, z) {
     const cloudGeometry = new THREE.SphereGeometry(5, 32, 32);
     const cloudMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff, // White color initially
-        opacity: 0.5, // Opacity for slight transparency
+        color: 0xffffff, 
+        opacity: 0.5, 
         transparent: true,
-        depthWrite: false // Disable depth write to prevent z-fighting
+        depthWrite: false 
     });
 
     const cloudGroup = new THREE.Group();
@@ -36,24 +36,24 @@ export function createCloud(scene, x, y, z) {
 
     // Create cloud spheres and add them to the group
     spherePositions.forEach(pos => {
-        const sphereMaterial = cloudMaterial.clone(); // Clone material for each sphere
+        const sphereMaterial = cloudMaterial.clone(); 
         const sphere = new THREE.Mesh(cloudGeometry, sphereMaterial);
         sphere.position.set(pos.x, pos.y, pos.z);
-        sphere.castShadow = true; // Enable shadows for the cloud spheres
+        sphere.castShadow = true; 
         cloudGroup.add(sphere);
     });
 
-    cloudGroup.position.set(x, y, z); // Position the cloud group
-    scene.add(cloudGroup); // Add the cloud group to the scene
+    cloudGroup.position.set(x, y, z);
+    scene.add(cloudGroup); 
 
     // Adjust the shadows for the cloud group
     cloudGroup.traverse(child => {
         if (child.isMesh) {
-            child.receiveShadow = true; // Enable shadows for the cloud spheres
-            child.material.shadowSide = THREE.FrontSide; // Adjust the shadow side
-            child.material.shadowDarkness = 0.3; // Adjust the shadow darkness
+            child.receiveShadow = true; 
+            child.material.shadowSide = THREE.FrontSide; 
+            child.material.shadowDarkness = 0.3; 
         }
     });
 
-    return cloudGroup; // Return the cloud group for potential further manipulation
+    return cloudGroup; 
 }

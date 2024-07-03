@@ -1,4 +1,3 @@
-// scene.js
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -57,8 +56,6 @@ export function initializeScene() {
     sky = skyComponents.sky;
     sun = skyComponents.sun;
     sunLight = skyComponents.sunLight;
-    lensflare = skyComponents.lensflare;
-    textureMoon = skyComponents.textureMoon;
 
     // Adding random clouds
     createRandomClouds(scene);
