@@ -30,7 +30,6 @@ export function createGarage(scene, x, y, z) {
                 });
             });
 
-
             // Load the roof model after the columns are added
             loader.load(
                 '/models/roof.glb',
@@ -48,6 +47,7 @@ export function createGarage(scene, x, y, z) {
                             child.receiveShadow = true;
                         }
                     });
+
                     // Load the gutter model and position it on the roof near the neighboring building
                     loader.load(
                         '/models/gutter.glb',
@@ -72,6 +72,59 @@ export function createGarage(scene, x, y, z) {
                         undefined,
                         function (error) {
                             console.error('An error occurred while loading the gutter model:', error);
+                        }
+                    );
+
+                    // Load the stairs model and position it at the back of the roof
+                    loader.load(
+                        '/models/stairs.glb',
+                        function (gltf) {
+                            const stairs = gltf.scene;
+
+                            // Adjust scale and position of the stairs
+                            stairs.scale.set(8, 8, 8);
+                            stairs.position.set(x, y - 1, z - 25); // Adjust the z position as needed
+
+                            scene.add(stairs);
+
+                            // Add shadows to the stairs
+                            stairs.traverse(function (child) {
+                                if (child.isMesh) {
+                                    child.castShadow = true;
+                                    child.receiveShadow = true;
+                                }
+                            });
+
+                            // Load the couch model and position it on the roof
+                            loader.load(
+                                '/models/couch.glb',
+                                function (gltf) {
+                                    const couch = gltf.scene;
+
+                                    // Adjust scale and position of the couch
+                                    couch.scale.set(2, 2, 2);
+                                    couch.position.set(x + 4, y + 20, z); // Adjust the y position to place it on the roof
+                                    couch.rotation.y = Math.PI + 2;
+
+                                    scene.add(couch);
+
+                                    // Add shadows to the couch
+                                    couch.traverse(function (child) {
+                                        if (child.isMesh) {
+                                            child.castShadow = true;
+                                            child.receiveShadow = true;
+                                        }
+                                    });
+                                },
+                                undefined,
+                                function (error) {
+                                    console.error('An error occurred while loading the couch model:', error);
+                                }
+                            );
+                        },
+                        undefined,
+                        function (error) {
+                            console.error('An error occurred while loading the stairs model:', error);
                         }
                     );
                 },
