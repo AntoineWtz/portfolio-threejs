@@ -19,9 +19,58 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(255, 255, 255, 0.7);
       padding: 10px;
       border-radius: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    #toggle-day-night {
+      display: none;
+    }
+
+    .toggle-label {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-label .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-label .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    #toggle-day-night:checked+.toggle-label .slider {
+      background-color: #333;
+    }
+
+    #toggle-day-night:checked+.toggle-label .slider:before {
+      transform: translateX(26px);
+    }
+
+    .emoji {
+      font-size: 20px;
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -30,7 +79,9 @@
   <div id="canvas-container"></div>
   <div id="toggle-container">
     <input type="checkbox" id="toggle-day-night" />
-    <label for="toggle-day-night">Jour/Nuit</label>
+    <label class="toggle-label" for="toggle-day-night">
+      <div class="slider"></div>
+    </label>
   </div>
   <script type="module" src="./src/main.js"></script>
 </body>
