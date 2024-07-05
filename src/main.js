@@ -23,15 +23,15 @@ function toggleDayNight() {
 
     if (isNight) {
         sun.material.color.set(0xffffff);
-        sunLight.intensity = 0.5;
-        gradient.addColorStop(0, '#333333');
-        gradient.addColorStop(1, '#220033');
+        sunLight.intensity = 0.3;
+        gradient.addColorStop(0, '#220033');
+        gradient.addColorStop(1, '#333333');
         updateCloudColor(0x6E8387);
     } else {
         sun.material.color.set(0xffff00);
         sunLight.intensity = 1;
-        gradient.addColorStop(0, '#65AFFF');
-        gradient.addColorStop(1, '#1E90FF');
+        gradient.addColorStop(0, '#1E90FF');
+        gradient.addColorStop(1, '#FFFFFF');
         updateCloudColor(0xffffff);
     }
 
