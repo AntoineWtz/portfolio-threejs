@@ -10,6 +10,7 @@ import { addBench } from './components/Bench';
 import { addStreetLight } from './components/StreetLight';
 import { createGarage } from './components/Garage';
 import { addRock } from './components/Rock';
+import { loadTextures } from './utils/TextureLoader';
 
 let camera, scene, renderer, controls;
 let sun, sky, sunLight, clouds = [];
@@ -21,7 +22,10 @@ export function initializeScene() {
     setupControls();
     setupLights();
 
-    loadTextures();
+    // Load textures and then setup environment
+    const textures = loadTextures();
+    grassTexture = textures.grass;
+    soilTexture = textures.soil;
 
     // Setup environment
     createFloatingIsland(scene, grassTexture, soilTexture);
@@ -71,11 +75,6 @@ function setupLights() {
 }
 
 let grassTexture, soilTexture;
-function loadTextures() {
-    const textureLoader = new THREE.TextureLoader();
-    grassTexture = textureLoader.load('/textures/grass_texture.jpg');
-    soilTexture = textureLoader.load('/textures/soil_texture.jpg');
-}
 
 function addElements() {
     addTree(scene, 40, 39, 25);

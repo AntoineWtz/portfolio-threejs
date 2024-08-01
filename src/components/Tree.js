@@ -4,30 +4,19 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 export function addTree(scene, x, y, z) {
     const loader = new GLTFLoader();
 
-    loader.load(
-        '/models/tree.glb',
-        function (gltf) {
-            const tree = gltf.scene;
+    loader.load(new URL('../../public/models/tree.glb', import.meta.url).toString(), (gltf) => {
+        const tree = gltf.scene;
+        tree.scale.set(16, 16, 16);
+        tree.position.set(x, y - 8, z);
+        scene.add(tree);
 
-            tree.scale.set(16, 16, 16);
-
-            // Adjust the position of the tree
-            tree.position.set(x, y - 8, z);
-
-            // Add the tree to the scene
-            scene.add(tree);
-
-            // Add shadows to the tree
-            tree.traverse(function (child) {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-        },
-        undefined,
-        function (error) {
-            console.error('Erreur lors du chargement du modèle 3D :', error);
-        }
-    );
+        tree.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }, undefined, (error) => {
+        console.error('An error occurred while loading the tree model:', error);
+    });
 }

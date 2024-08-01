@@ -5,7 +5,7 @@ export function createGarage(scene, x, y, z) {
 
     // Load the column model
     loader.load(
-        '/models/column.glb',
+        new URL('../../public/models/column.glb', import.meta.url).toString(),
         function (gltf) {
             const column = gltf.scene;
 
@@ -32,7 +32,7 @@ export function createGarage(scene, x, y, z) {
 
             // Load the roof model after the columns are added
             loader.load(
-                '/models/roof.glb',
+                new URL('../../public/models/roof.glb', import.meta.url).toString(),
                 function (gltf) {
                     const roof = gltf.scene;
 
@@ -50,7 +50,7 @@ export function createGarage(scene, x, y, z) {
 
                     // Load the gutter model and position it on the roof near the neighboring building
                     loader.load(
-                        '/models/gutter.glb',
+                        new URL('../../public/models/gutter.glb', import.meta.url).toString(),
                         function (gltf) {
                             const gutter = gltf.scene;
 
@@ -77,7 +77,7 @@ export function createGarage(scene, x, y, z) {
 
                     // Load the stairs model and position it at the back of the roof
                     loader.load(
-                        '/models/stairs.glb',
+                        new URL('../../public/models/stairs.glb', import.meta.url).toString(),
                         function (gltf) {
                             const stairs = gltf.scene;
 
@@ -97,7 +97,7 @@ export function createGarage(scene, x, y, z) {
 
                             // Load the couch model and position it on the roof
                             loader.load(
-                                '/models/couch.glb',
+                                new URL('../../public/models/couch.glb', import.meta.url).toString(),
                                 function (gltf) {
                                     const couch = gltf.scene;
 
